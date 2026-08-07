@@ -6,7 +6,8 @@ import { ArrowRightIcon, ClockIcon } from "lucide-react";
 import isoTimeFormat from "../lib/isoTimeFormat";
 import BlurCircle from "../components/BlurCircle";
 import toast from "react-hot-toast";
-import { Show, useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/AppContext";
+import { Show, TimeSlot } from "../types";
 
 const SeatLayout = () => {
   const groupRows = [
@@ -18,11 +19,6 @@ const SeatLayout = () => {
   ];
 
   const { axios, user, getToken } = useAppContext();
-
-  interface TimeSlot {
-    showId: string;
-    time: string;
-  }
 
   const { id, date } = useParams<{ id: string; date: string }>();
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);

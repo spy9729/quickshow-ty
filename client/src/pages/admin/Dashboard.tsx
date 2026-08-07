@@ -10,8 +10,9 @@ import Loading from "../../components/Loading";
 import Title from "../../components/admin/Title.tsx";
 import BlurCircle from "../../components/BlurCircle";
 import { dateFormat } from "../../lib/dateFormat";
-import { Show, useAppContext } from "../../context/AppContext";
+import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import { Show } from "../../types/index.ts";
 
 const Dashboard = () => {
   const { axios, getToken, user, image_base_url } = useAppContext();

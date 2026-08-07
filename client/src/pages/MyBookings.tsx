@@ -3,8 +3,9 @@ import Loading from "../components/Loading.js";
 import BlurCircle from "../components/BlurCircle.js";
 import timeFormat from "../lib/timeFormat.js";
 import { dateFormat } from "../lib/dateFormat.js";
-import { Booking, useAppContext } from "../context/AppContext.js";
+import { useAppContext } from "../context/AppContext.js";
 import { Link } from "react-router-dom";
+import { Booking } from "../types/index.js";
 
 const MyBookings = () => {
   const { axios, user, getToken, image_base_url } = useAppContext();

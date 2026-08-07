@@ -3,8 +3,9 @@ import Title from "../../components/admin/Title.tsx";
 import Loading from "../../components/Loading";
 import { CheckIcon, DeleteIcon, StarIcon } from "lucide-react";
 import { kConvertor } from "../../lib/kConvertor";
-import { Movie, useAppContext } from "../../context/AppContext";
+import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import { Movie } from "../../types/index.ts";
 
 const AddShows = () => {
   const { axios, getToken, user, image_base_url } = useAppContext();

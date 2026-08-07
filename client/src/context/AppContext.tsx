@@ -9,54 +9,14 @@ import axios, { AxiosInstance } from "axios";
 import { useAuth, useUser } from "@clerk/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { UserResource } from "@clerk/react/types";
+import { Movie, Show } from "../types";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
-export interface Movie {
-  _id?: string;
-  id?: number;
-  title: string;
-  poster_path: string;
-  backdrop_path: string;
-  vote_average: number;
-  overview: string;
-  runtime: number;
-  genres: { id?: number; name: string }[];
-  release_date: string;
-  vote_count: number;
-  casts: { name: string; profile_path: string }[];
-}
-
-export interface Show {
-  _id?: string;
-  id?: string;
-  movie: Movie;
-  showDateTime: string;
-  showPrice: number;
-  dateTime?: Record<string, any>;
-  occupiedSeats?: Record<string, any>;
-}
-
-export interface User {
-  _id?: string;
-  name: string;
-  email: string;
-  image: string;
-}
-
-export interface Booking {
-  _id?: string;
-  user: User;
-  show: Show;
-  bookedSeats: string[];
-  amount: number;
-  isPaid: boolean;
-  paymentLink?: string;
-}
-
 export interface AppContextType {
   axios: AxiosInstance;
-  user: any;
+  user: UserResource | undefined | null;
   getToken: () => Promise<string | null>;
   image_base_url: string;
   shows: Show[];

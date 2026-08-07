@@ -1,11 +1,9 @@
 import { StarIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import timeFormat from "../lib/timeFormat.ts";
-import { Movie, useAppContext } from "../context/AppContext.js";
+import { useAppContext } from "../context/AppContext.js";
+import { Genre, Movie } from "../types/index.ts";
 
-interface Genre {
-  name: string;
-}
 interface MovieCardProps {
   movie: Movie;
 }
