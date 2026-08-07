@@ -1,9 +1,8 @@
 import { ArrowRight } from "lucide-react";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import BlurCircle from "./BlurCircle";
-import MovieCard from "./MovieCard";
-import { useAppContext } from "../context/AppContext";
+import MovieCard from "./MovieCard.tsx";
+import { useAppContext } from "../context/AppContext.tsx";
 
 const FeaturedSection = () => {
   const { shows } = useAppContext();
@@ -24,7 +23,7 @@ const FeaturedSection = () => {
       </div>
       <div className="flex flex-wrap max-sm:justify-center gap-8 mt-8">
         {shows.slice(0, 4).map((show) => (
-          <MovieCard key={show._id} movie={show} />
+          <MovieCard key={show._id} movie={show.movie} />
         ))}
       </div>
       <div className="flex justify-center mt-20">

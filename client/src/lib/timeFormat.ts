@@ -1,4 +1,4 @@
-const timeFormat = (minutes) => {
+const timeFormat = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const minutesRemainder = minutes % 60;
   return `${hours}h ${minutesRemainder}m`;

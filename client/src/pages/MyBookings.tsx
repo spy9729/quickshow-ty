@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { dummyBookingData } from "../assets/assets";
-import Loading from "../components/Loading";
-import BlurCircle from "../components/BlurCircle";
-import isoTimeFormat from "../lib/isoTimeFormat";
+import { useEffect, useState } from "react";
+import Loading from "../components/Loading.js";
+import BlurCircle from "../components/BlurCircle.js";
 import timeFormat from "../lib/timeFormat.js";
-import { dateFormat } from "../lib/dateFormat";
-import { useAppContext } from "../context/AppContext";
+import { dateFormat } from "../lib/dateFormat.js";
+import { Booking, useAppContext } from "../context/AppContext.js";
 import { Link } from "react-router-dom";
 
 const MyBookings = () => {
@@ -13,7 +11,7 @@ const MyBookings = () => {
 
   const currency = import.meta.env.VITE_CURRENCY;
 
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const getMyBookings = async () => {
@@ -72,7 +70,7 @@ const MyBookings = () => {
               </p>
               {!item.isPaid && (
                 <Link
-                  to={item.paymentLink}
+                  to={item.paymentLink!}
                   className="bg-primary px-4 py-1.5 mb-3 text-sm rounded-full font-medium cursor-pointer active:scale-95"
                 >
                   Pay now

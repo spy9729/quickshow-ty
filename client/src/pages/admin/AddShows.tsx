@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Title from "../../components/admin/Title";
+import { useEffect, useState } from "react";
+import Title from "../../components/admin/Title.tsx";
 import Loading from "../../components/Loading";
 import { CheckIcon, DeleteIcon, StarIcon } from "lucide-react";
 import { kConvertor } from "../../lib/kConvertor";
-import { useAppContext } from "../../context/AppContext";
+import { Movie, useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 
 const AddShows = () => {
@@ -11,9 +11,15 @@ const AddShows = () => {
 
   const currency = import.meta.env.VITE_CURRENCY;
 
-  const [nowPLayingMovies, setNowPlayingMovies] = useState([]);
-  const [selectedMovie, setSelectedMovies] = useState(null);
-  const [dateTimeSelection, setDateTimeSelectiom] = useState({});
+  type DateTimeSelection = Record<string, string[]>;
+
+  const [nowPLayingMovies, setNowPlayingMovies] = useState<Movie[]>([]);
+  const [selectedMovie, setSelectedMovies] = useState<
+    number | string | undefined
+  >(undefined);
+  const [dateTimeSelection, setDateTimeSelectiom] = useState<DateTimeSelection>(
+    {},
+  );
   const [dateTimeInput, setDateTimeInput] = useState("");
   const [showPrice, setShowPrice] = useState("");
   const [addingShow, setAddingShow] = useState(false);
@@ -45,7 +51,7 @@ const AddShows = () => {
     });
   };
 
-  const handleRemoveTime = (date, time) => {
+  const handleRemoveTime = (date: string, time: string) => {
     setDateTimeSelectiom((prev) => {
       const filteredTimes = prev[date].filter((t) => t !== time);
       if (filteredTimes.length === 0) {
@@ -61,7 +67,7 @@ const AddShows = () => {
       setAddingShow(true);
       if (
         !selectedMovie ||
-        Object.keys(dateTimeSelection.length || {}) === 0 ||
+        Object.keys(dateTimeSelection).length === 0 ||
         !showPrice
       ) {
         return toast("Missing required fields!");
@@ -83,7 +89,7 @@ const AddShows = () => {
 
       if (data.success) {
         toast.success(data.message);
-        setSelectedMovies(null);
+        setSelectedMovies(undefined);
         setDateTimeSelectiom({});
         setShowPrice("");
       } else {

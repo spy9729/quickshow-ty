@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import BlurCircle from "./BlurCircle";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const DateSelect = ({ dateTime, id }) => {
+interface DateSelectProps {
+  dateTime: Record<string, any>;
+  id: string;
+}
+
+const DateSelect = ({ dateTime, id }: DateSelectProps) => {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState<string | null>(null);
   const onBookHandler = () => {
     if (!selected) {
       return toast("Please select a date!");

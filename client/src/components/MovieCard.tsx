@@ -1,10 +1,16 @@
 import { StarIcon } from "lucide-react";
-import React from "react";
 import { useNavigate } from "react-router-dom";
-import timeFormat from "../lib/timeFormat.js";
-import { useAppContext } from "../context/AppContext";
+import timeFormat from "../lib/timeFormat.ts";
+import { Movie, useAppContext } from "../context/AppContext.js";
 
-const MovieCard = ({ movie }) => {
+interface Genre {
+  name: string;
+}
+interface MovieCardProps {
+  movie: Movie;
+}
+
+const MovieCard = ({ movie }: MovieCardProps) => {
   const { image_base_url } = useAppContext();
   const navigate = useNavigate();
   return (
@@ -20,12 +26,15 @@ const MovieCard = ({ movie }) => {
       />
       <p className="font-semibold mt-2 truncate">{movie.title}</p>
       <p className="text-sm text-gray-400 mt-2">
-        {new Date(movie.release_date).getFullYear()} •{" "}
+        {movie.release_date
+          ? new Date(movie.release_date).getFullYear()
+          : "N/A"}{" "}
+        •{" "}
         {movie.genres
-          .slice(0, 2)
-          .map((genre) => genre.name)
+          ?.slice(0, 2)
+          .map((genre: Genre) => genre.name)
           .join(", ")}{" "}
-        • {timeFormat(movie.runtime)}
+        • {movie.runtime && ` • ${timeFormat(movie.runtime)}`}
       </p>
       <div className="flex items-center justify-between mt-4 pb-3">
         <button
@@ -39,7 +48,7 @@ const MovieCard = ({ movie }) => {
         </button>
         <p className="flex items-center gap-1 text-sm text-gray-400 mt-1 pr-1">
           <StarIcon className="w-4 h-4 text-primary fill-primary" />
-          {movie.vote_average.toFixed(1)}
+          {movie.vote_average?.toFixed(1)}
         </p>
       </div>
     </div>

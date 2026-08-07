@@ -1,58 +1,59 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
-import Title from "../../components/admin/Title";
+import Title from "../../components/admin/Title.tsx";
 import { dateFormat } from "../../lib/dateFormat";
-import { useAppContext } from "../../context/AppContext";
+import { Booking, useAppContext } from "../../context/AppContext";
 
-const ListShows = () => {
+const ListBookings = () => {
   const { axios, getToken, user } = useAppContext();
 
   const currency = import.meta.env.VITE_CURRENCY;
 
-  const [shows, setShows] = useState([]);
-  const [isLoading, setisLoading] = useState(true);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const getAllShows = async () => {
+  const getAllBookings = async () => {
     try {
-      const { data } = await axios.get("/api/admin/all-shows", {
+      const { data } = await axios.get("/api/admin/all-bookings", {
         headers: { Authorization: `Bearer ${await getToken()}` },
       });
-      setShows(data.shows);
-      setisLoading(false);
+
+      setBookings(data.bookings || []);
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     if (user) {
-      getAllShows();
+      getAllBookings();
     }
   }, [user]);
   return !isLoading ? (
     <>
-      <Title text1="List" text2="Shows" />
+      <Title text1="List" text2="Bookings" />
       <div className="max-w-4xl mt-6 overflow-x-auto">
         <table className="w-full border-collapse rounded-md overflow-hidden text-nowrap">
           <thead>
             <tr className="bg-primary/20 text-left text-white">
+              <th className="p-2 font-medium">User Name</th>
               <th className="p-2 font-medium pl-5">Movie Name</th>
               <th className="p-2 font-medium">Show Time</th>
-              <th className="p-2 font-medium">Total Bookings</th>
-              <th className="p-2 font-medium">Earnings</th>
+              <th className="p-2 font-medium">Seats</th>
+              <th className="p-2 font-medium">Amount</th>
             </tr>
           </thead>
           <tbody className="text-sm font-light">
-            {shows.map((show, index) => (
+            {bookings.map((item, index) => (
               <tr key={index} className="border-b border-primary/10">
-                <td className="p-2 min-w-45 pl-5">{show.movie.title}</td>
-                <td className="p-2">{dateFormat(show.showDateTime)}</td>
-                <td className="p-2">
-                  {Object.keys(show.occupiedSeats).length}
-                </td>
+                <td className="p-2 min-w-45 pl-5">{item.user.name}</td>
+                <td className="p-2">{item.show.movie.title}</td>
+                <td className="p-2">{dateFormat(item.show.showDateTime)}</td>
+                <td className="p-2">{item.bookedSeats.join(", ")}</td>
                 <td className="p-2">
                   {currency}
-                  {Object.keys(show.occupiedSeats).length * show.showPrice}
+                  {item.amount}
                 </td>
               </tr>
             ))}
@@ -65,4 +66,4 @@ const ListShows = () => {
   );
 };
 
-export default ListShows;
+export default ListBookings;

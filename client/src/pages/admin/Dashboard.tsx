@@ -5,12 +5,12 @@ import {
   StarIcon,
   UsersIcon,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
-import Title from "../../components/admin/Title";
+import Title from "../../components/admin/Title.tsx";
 import BlurCircle from "../../components/BlurCircle";
 import { dateFormat } from "../../lib/dateFormat";
-import { useAppContext } from "../../context/AppContext";
+import { Show, useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 
 const Dashboard = () => {
@@ -62,7 +62,7 @@ const Dashboard = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error("Error fetching dashboard data", error);
+      toast.error("Error fetching dashboard data");
     }
   };
 
@@ -94,7 +94,7 @@ const Dashboard = () => {
       <p className="mt-10 font-medium text-lg">Active Shows</p>
       <div className="relative flex flex-wrap gap-6 mt-4 max-w-5xl">
         <BlurCircle top="100px" left="-10%" />
-        {dashboardData.activeShows.map((show) => (
+        {dashboardData.activeShows.map((show: Show) => (
           <div
             key={show._id}
             className="w-55 rounded-lg overflow-hidden h-full pb-3 bg-primary/10 border border-primary/20 hover:translate-y-1 transition duration-300 cursor-pointer"

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import BlurCircle from "../components/BlurCircle";
+import BlurCircle from "../components/BlurCircle.js";
 import { HeartIcon, PlayCircleIcon, StarIcon } from "lucide-react";
 import timeFormat from "../lib/timeFormat.js";
-import DateSelect from "../components/DateSelect";
-import MovieCard from "../components/MovieCard";
-import Loading from "../components/Loading";
-import { useAppContext } from "../context/AppContext";
+import DateSelect from "../components/DateSelect.js";
+import MovieCard from "../components/MovieCard.js";
+import Loading from "../components/Loading.js";
+import { Movie, Show, useAppContext } from "../context/AppContext.js";
 import toast from "react-hot-toast";
 
 const MovieDetails = () => {
@@ -22,7 +22,7 @@ const MovieDetails = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const [show, setShow] = useState(null);
+  const [show, setShow] = useState<Show | null>(null);
 
   const getShow = async () => {
     try {
@@ -74,15 +74,17 @@ const MovieDetails = () => {
           </h1>
           <div className="flex items-center gap-2 text-gray-300">
             <StarIcon className="w-5 h-5 text-primary fill-primary" />
-            {show.movie.vote_average.toFixed(1)} User Rating
+            {show.movie.vote_average?.toFixed(1)} User Rating
           </div>
           <p className="text-gray-400 mt-2 text-sm leading-tight max-w-xl ">
             {show.movie.overview}
           </p>
           <p className="">
             {timeFormat(show.movie.runtime)} •{" "}
-            {show.movie.genres.map((genre) => genre.name).join(", ")} •{" "}
-            {show.movie.release_date.split("-")[0]}
+            {show.movie.genres
+              ?.map((genre: { name: string }) => genre.name)
+              .join(", ")}{" "}
+            • {show.movie.release_date?.split("-")[0]}
           </p>
           <div className="flex flex-wrap items-center gap-4 mt-4 ">
             <button className="flex items-center gap-2 px-7 py-3 text-sm bg-gray-800 hover:bg-gray-900 transition rounded-md font-medium cursor-pointer active:scale-95">
@@ -99,7 +101,7 @@ const MovieDetails = () => {
               className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95"
             >
               <HeartIcon
-                className={`w-5 h-5 ${favoriteMovies.find((movie) => movie._id === id) ? "fill-primary text-primary" : ""}`}
+                className={`w-5 h-5 ${favoriteMovies.find((movie: Movie) => movie._id === id) ? "fill-primary text-primary" : ""}`}
               />
             </button>
           </div>
@@ -108,23 +110,28 @@ const MovieDetails = () => {
       <p className="text-lg font-medium mt-20">Your Favorite Cast</p>
       <div className="overflow-x-auto no-scrollbar mt-8 pb-4">
         <div className="flex items-center gap-4 w-max px-4">
-          {show.movie.casts.slice(0, 12).map((cast, index) => (
-            <div key={index} className="flex flex-col items-center text-center">
-              <img
-                src={image_base_url + cast.profile_path}
-                alt=""
-                className="rounded-full h-20 md:h-20 aspect-square object-cover"
-              />
-              <p className="font-medium text-xs mt-3">{cast.name}</p>
-            </div>
-          ))}
+          {show.movie.casts
+            ?.slice(0, 12)
+            .map((cast: { name: string; profile_path: string }, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center text-center"
+              >
+                <img
+                  src={image_base_url + cast.profile_path}
+                  alt=""
+                  className="rounded-full h-20 md:h-20 aspect-square object-cover"
+                />
+                <p className="font-medium text-xs mt-3">{cast.name}</p>
+              </div>
+            ))}
         </div>
       </div>
-      <DateSelect id={id} dateTime={show.dateTime} />
+      <DateSelect id={id || ""} dateTime={show.dateTime || {}} />
       <p className="text-lg font-medium mt-20 mb-8">You may also like</p>
       <div className="flex flex-wrap max-sm:justify-center gap-8">
-        {shows.slice(0, 4).map((movie, index) => (
-          <MovieCard key={index} movie={movie} />
+        {shows.slice(0, 4).map((show: Show, index) => (
+          <MovieCard key={index} movie={show.movie} />
         ))}
       </div>
       <div className="flex justify-center mt-20">

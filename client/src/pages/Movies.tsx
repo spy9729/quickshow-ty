@@ -1,4 +1,3 @@
-import React from "react";
 import MovieCard from "../components/MovieCard";
 import BlurCircle from "../components/BlurCircle";
 import { useAppContext } from "../context/AppContext";
@@ -11,8 +10,8 @@ const Movies = () => {
       <BlurCircle bottom="50px" right="50px" />
       <h1 className="text-lg font-medium my-4">Now Showing</h1>
       <div className="flex flex-wrap max-sm:justify-center gap-8">
-        {shows.map((movie) => (
-          <MovieCard movie={movie} key={movie._id} />
+        {shows.map((show) => (
+          <MovieCard movie={show.movie} key={show._id} />
         ))}
       </div>
     </div>

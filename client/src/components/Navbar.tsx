@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/react";
-import { useAppContext } from "../context/AppContext";
+import { useAppContext } from "../context/AppContext.tsx";
 
 const Navbar = () => {
   const { favoriteMovies } = useAppContext();
@@ -88,7 +88,7 @@ const Navbar = () => {
         <SearchIcon className="max-md:hidden w-6 h-6 cursor-pointer" />
         {!user ? (
           <button
-            onClick={openSignIn}
+            onClick={() => openSignIn}
             className="px-4 py-1 sm:px-7 sm:py-2 bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer"
           >
             Login

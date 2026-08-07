@@ -1,4 +1,4 @@
-export const dateFormat = (date) => {
+export const dateFormat = (date: Date | string): string => {
   return new Date(date).toLocaleDateString("en-US", {
     weekday: "short",
     month: "long",
