@@ -1,10 +1,14 @@
 import stripe from "stripe";
 import Booking from "../models/Booking.js";
 import { inngest } from "../inngest/index.js";
+import { Request, Response } from "express";
 
-export const stripeWebhooks = async (request, response) => {
-  const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
-  const sig = request.headers["stripe-signature"];
+export const stripeWebhooks = async (
+  request: Request,
+  response: Response,
+): Promise<void> => {
+  const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY || "");
+  const sig = request.headers["stripe-signature"] as string;
 
   let event;
 
@@ -12,10 +16,11 @@ export const stripeWebhooks = async (request, response) => {
     event = stripeInstance.webhooks.constructEvent(
       request.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET,
+      process.env.STRIPE_WEBHOOK_SECRET || "",
     );
   } catch (error) {
-    return response.status(400).send(`Webhook Error : ${error.message}`);
+    response.status(400).send(`Webhook Error : ${(error as Error).message}`);
+    return;
   }
 
   try {
@@ -27,7 +32,7 @@ export const stripeWebhooks = async (request, response) => {
         });
 
         const session = sessionList.data[0];
-        const { bookingId } = session.metadata;
+        const { bookingId } = session.metadata as { bookingId: string };
 
         await Booking.findByIdAndUpdate(bookingId, {
           isPaid: true,
@@ -44,7 +49,8 @@ export const stripeWebhooks = async (request, response) => {
         console.log("Unhandled event type:", event.type);
         break;
     }
-    return response.json({ received: true });
+    response.json({ received: true });
+    return;
   } catch (err) {
     console.log("Webhook processing error:", err);
     response.status(500).send("Internal server error!");

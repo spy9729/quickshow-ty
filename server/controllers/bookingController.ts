@@ -1,17 +1,24 @@
+import { Response } from "express";
 import { inngest } from "../inngest/index.js";
+import { AuthenticationRequest } from "../middleware/auth.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import stripe from "stripe";
 
 // Function to check availablitiy of selected seats for a movie
-export const checkSeatsAvailability = async (showId, selectedSeats) => {
+export const checkSeatsAvailability = async (
+  showId: string,
+  selectedSeats: string[],
+): Promise<boolean> => {
   try {
     const showData = await Show.findById(showId);
     if (!showData) return false;
 
     const occupiedSeats = showData.occupiedSeats;
 
-    const isAnySeatsTaken = selectedSeats.some((seat) => occupiedSeats[seat]);
+    const isAnySeatsTaken = selectedSeats.some(
+      (seat: string) => occupiedSeats[seat],
+    );
 
     return !isAnySeatsTaken;
   } catch (error) {
@@ -21,9 +28,12 @@ export const checkSeatsAvailability = async (showId, selectedSeats) => {
 };
 
 // Function to createbooking
-export const createbooking = async (req, res) => {
+export const createbooking = async (
+  req: AuthenticationRequest,
+  res: Response,
+): Promise<void> => {
   try {
-    const { userId } = req.auth(); // getAuth(req)
+    const userId = req.auth?.userId;
     const { showId, selectedSeats } = req.body;
     const { origin } = req.headers;
 
@@ -31,10 +41,11 @@ export const createbooking = async (req, res) => {
     const isAvailable = await checkSeatsAvailability(showId, selectedSeats);
 
     if (!isAvailable) {
-      return res.json({
+      res.json({
         success: false,
         message: "Selected seats are not available!",
       });
+      return;
     }
 
     // Get show details
@@ -48,7 +59,7 @@ export const createbooking = async (req, res) => {
       bookedSeats: selectedSeats,
     });
 
-    selectedSeats.map((seat) => {
+    selectedSeats.map((seat: string) => {
       showData.occupiedSeats[seat] = userId;
     });
 
@@ -56,7 +67,7 @@ export const createbooking = async (req, res) => {
     await showData.save();
 
     // Stripe gateway initialize
-    const stripeInsatance = new stripe(process.env.STRIPE_SECRET_KEY);
+    const stripeInsatance = new stripe(process.env.STRIPE_SECRET_KEY || "");
 
     // creating line items for stripe
     const line_items = [
@@ -94,12 +105,15 @@ export const createbooking = async (req, res) => {
       url: session.url,
     });
   } catch (error) {
-    console.log(error.message);
-    res.json({ success: false, message: error.message });
+    console.log((error as Error).message);
+    res.json({ success: false, message: (error as Error).message });
   }
 };
 
-export const getOccupiedSeats = async (req, res) => {
+export const getOccupiedSeats = async (
+  req: AuthenticationRequest,
+  res: Response,
+): Promise<void> => {
   try {
     const { showId } = req.params;
     const showData = await Show.findById(showId);
@@ -108,7 +122,7 @@ export const getOccupiedSeats = async (req, res) => {
 
     res.json({ success: true, occupiedSeats });
   } catch (error) {
-    console.log(error.message);
-    res.json({ success: false, message: error.message });
+    console.log((error as Error).message);
+    res.json({ success: false, message: (error as Error).message });
   }
 };

@@ -1,9 +1,13 @@
 import axios from "axios";
 import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
+import { Request, Response } from "express";
 
 // API tp get now playing movie from TMDB
-export const getNowPLayingMovies = async (req, res) => {
+export const getNowPLayingMovies = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { data } = await axios.get(
       "https://api.themoviedb.org/3/movie/now_playing",
@@ -16,14 +20,25 @@ export const getNowPLayingMovies = async (req, res) => {
     res.json({ success: true, movies: movies });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: (error as Error).message });
   }
 };
 
+interface ShowInput {
+  date: string;
+  time: string[];
+}
+
+interface AddShowRequestBody {
+  movieId: string | number;
+  showPrice: number;
+  showInput: ShowInput[];
+}
+
 // API to add new show to the database
-export const addShow = async (req, res) => {
+export const addShow = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { movieId, showInput, showPrice } = req.body;
+    const { movieId, showInput, showPrice }: AddShowRequestBody = req.body;
 
     let movie = await Movie.findById(movieId);
 
@@ -59,11 +74,16 @@ export const addShow = async (req, res) => {
       movie = await Movie.create(movieDetails);
     }
 
-    const showsToCreate = [];
+    const showsToCreate: {
+      movie: string | number;
+      showDateTime: Date;
+      showPrice: number;
+      occupiedSeats: Record<string, any>;
+    }[] = [];
 
-    showInput.forEach((show) => {
+    showInput.forEach((show: ShowInput) => {
       const showDate = show.date;
-      show.time.forEach((time) => {
+      show.time.forEach((time: string) => {
         const dateTimeString = `${showDate}T${time}`;
         showsToCreate.push({
           movie: movieId,
@@ -81,12 +101,12 @@ export const addShow = async (req, res) => {
     res.json({ success: true, message: "Show added successfully!" });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: (error as Error).message });
   }
 };
 
 // API to get all shows from databse
-export const getShows = async (req, res) => {
+export const getShows = async (req: Request, res: Response): Promise<void> => {
   try {
     const shows = await Show.find({
       showDateTime: { $gte: new Date() },
@@ -100,12 +120,12 @@ export const getShows = async (req, res) => {
     res.json({ success: true, shows: Array.from(uniqueShows) });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: (error as Error).message });
   }
 };
 
 // API to get a single show from database
-export const getShow = async (req, res) => {
+export const getShow = async (req: Request, res: Response): Promise<void> => {
   try {
     const { movieId } = req.params;
 
@@ -116,7 +136,7 @@ export const getShow = async (req, res) => {
     });
 
     const movie = await Movie.findById(movieId);
-    const dateTime = {};
+    const dateTime: Record<string, { time: any; showId: any }[]> = {};
 
     shows.forEach((show) => {
       const date = show.showDateTime.toISOString().split("T")[0];
@@ -130,6 +150,6 @@ export const getShow = async (req, res) => {
     res.json({ success: true, movie, dateTime });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: error.message });
+    res.json({ success: false, message: (error as Error).message });
   }
 };
