@@ -25,6 +25,10 @@ const MovieDetails = () => {
   const { id } = useParams();
   const [show, setShow] = useState<Show | null>(null);
 
+  const isFavorite = favoriteMovies.some(
+    (movie: Movie) => String(movie._id) === String(id),
+  );
+
   const getShow = async () => {
     try {
       const { data } = await axios.get(`/api/show/${id}`);
@@ -102,7 +106,7 @@ const MovieDetails = () => {
               className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95"
             >
               <HeartIcon
-                className={`w-5 h-5 ${favoriteMovies.find((movie: Movie) => movie._id === id) ? "fill-primary text-primary" : ""}`}
+                className={`w-5 h-5 ${isFavorite ? "fill-primary text-primary" : ""}`}
               />
             </button>
           </div>
@@ -131,8 +135,8 @@ const MovieDetails = () => {
       <DateSelect id={id || ""} dateTime={show.dateTime || {}} />
       <p className="text-lg font-medium mt-20 mb-8">You may also like</p>
       <div className="flex flex-wrap max-sm:justify-center gap-8">
-        {shows.slice(0, 4).map((show: Show, index) => (
-          <MovieCard key={index} movie={show.movie} />
+        {shows.slice(0, 4).map((movie: Movie, index) => (
+          <MovieCard key={index} movie={movie} />
         ))}
       </div>
       <div className="flex justify-center mt-20">

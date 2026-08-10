@@ -4,6 +4,7 @@ import { AuthenticationRequest } from "../middleware/auth.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import stripe from "stripe";
+import { getAuth } from "@clerk/express";
 
 // Function to check availablitiy of selected seats for a movie
 export const checkSeatsAvailability = async (
@@ -33,7 +34,7 @@ export const createbooking = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.auth?.userId;
+    const { userId } = getAuth(req);
     const { showId, selectedSeats } = req.body;
     const { origin } = req.headers;
 
@@ -86,7 +87,10 @@ export const createbooking = async (
       cancel_url: `${origin}/my-bookings`,
       line_items: line_items,
       mode: "payment",
-      metadata: { bookingId: booking._id.toString() },
+      metadata: {
+        bookingId: booking._id.toString(),
+        appName: "movie-ticket-booking-ty",
+      },
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // expired in 30 minutes
     });
 

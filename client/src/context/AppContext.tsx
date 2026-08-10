@@ -10,7 +10,7 @@ import { useAuth, useUser } from "@clerk/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { UserResource } from "@clerk/react/types";
-import { Movie, Show } from "../types";
+import { Movie } from "../types";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -19,7 +19,7 @@ export interface AppContextType {
   user: UserResource | undefined | null;
   getToken: () => Promise<string | null>;
   image_base_url: string;
-  shows: Show[];
+  shows: Movie[];
   favoriteMovies: Movie[];
   fetchFavoriteMovies: () => Promise<void>;
   isAdmin: boolean;
