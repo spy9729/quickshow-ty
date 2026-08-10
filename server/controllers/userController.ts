@@ -10,8 +10,8 @@ export const getUserBookings = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const user = req.auth?.userId;
-    const bookings = await Booking.find({ user })
+    const { userId } = getAuth(req);
+    const bookings = await Booking.find({ userId })
       .populate({
         path: "show",
         populate: { path: "movie" },
@@ -67,8 +67,6 @@ export const getFavorites = async (
 ): Promise<void> => {
   try {
     const { userId } = getAuth(req);
-
-    console.log("UserId from Clerk:", userId);
 
     if (!userId) {
       res.status(401).json({ success: false, message: "Unauthenticated" });
