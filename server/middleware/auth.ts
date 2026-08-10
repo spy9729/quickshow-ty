@@ -1,4 +1,4 @@
-import { clerkClient } from "@clerk/express";
+import { clerkClient, getAuth } from "@clerk/express";
 import { NextFunction, Request, Response } from "express";
 
 export interface AuthenticationRequest extends Request {
@@ -11,7 +11,7 @@ export const protectAdmin = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const userId = req.auth?.userId;
+    const { userId } = getAuth(req);
 
     if (!userId) {
       res.status(401).json({ success: false, message: "Unauthenticated" });

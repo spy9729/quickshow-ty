@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import sendEmail from "../config/nodeMailer.js";
-export const inngest = new Inngest({ id: "movie-ticket-booking" });
+export const inngest = new Inngest({ id: "movie-ticket-booking-ty" });
 // Inngest function to save user to database
 const syncUserCreation = inngest.createFunction({
     id: "sync-user-from-clerk",

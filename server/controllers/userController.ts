@@ -1,4 +1,4 @@
-import { clerkClient } from "@clerk/express";
+import { clerkClient, getAuth } from "@clerk/express";
 import Booking from "../models/Booking.js";
 import Movie from "../models/Movie.js";
 import { Request, Response } from "express";
@@ -32,10 +32,10 @@ export const updateFavorite = async (
 ): Promise<void> => {
   try {
     const { movieId } = req.body;
-    const userId = req.auth?.userId;
+    const { userId } = getAuth(req);
 
     if (!userId) {
-      res.json({ success: false, message: "Unauthorized" });
+      res.status(401).json({ success: false, message: "Unauthenticated" });
       return;
     }
 
@@ -66,9 +66,12 @@ export const getFavorites = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.auth?.userId;
+    const { userId } = getAuth(req);
+
+    console.log("UserId from Clerk:", userId);
+
     if (!userId) {
-      res.json({ success: false, message: "Unauthorized" });
+      res.status(401).json({ success: false, message: "Unauthenticated" });
       return;
     }
 

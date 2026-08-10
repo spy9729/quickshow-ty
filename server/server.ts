@@ -12,6 +12,7 @@ import userRouter from "./routes/userRoutes.js";
 import { stripeWebhooks } from "./controllers/stripeWebooks.js";
 
 const app = express();
+const port = 3000;
 
 await connectDB();
 
@@ -37,5 +38,9 @@ app.use("/api/show", showRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/user", userRouter);
+
+app.listen(port, () =>
+  console.log(`Server listening at http://localhost:${port}`),
+);
 
 export default app;
