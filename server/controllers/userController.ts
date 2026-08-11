@@ -11,7 +11,7 @@ export const getUserBookings = async (
 ): Promise<void> => {
   try {
     const { userId } = getAuth(req);
-    const bookings = await Booking.find({ userId })
+    const bookings = await Booking.find({ user: userId })
       .populate({
         path: "show",
         populate: { path: "movie" },
