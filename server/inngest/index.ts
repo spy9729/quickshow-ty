@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
 import sendEmail from "../config/nodeMailer.js";
+import connectDB from "../config/db.js";
 
 export const inngest = new Inngest({ id: "movie-ticket-booking-ty" });
 
@@ -13,6 +14,7 @@ const syncUserCreation = inngest.createFunction(
     triggers: { event: "clerk/user.created" },
   },
   async ({ event }) => {
+    await connectDB();
     const { id, first_name, last_name, email_addresses, image_url } =
       event.data;
 
@@ -32,6 +34,7 @@ const syncUserDeletion = inngest.createFunction(
     triggers: { event: "clerk/user.deleted" },
   },
   async ({ event }) => {
+    await connectDB();
     const { id } = event.data;
     await User.findByIdAndDelete(id);
   },
@@ -44,6 +47,7 @@ const syncUserUpdation = inngest.createFunction(
     triggers: { event: "clerk/user.updated" },
   },
   async ({ event }) => {
+    await connectDB();
     const { id, first_name, last_name, email_addresses, image_url } =
       event.data;
     await User.findByIdAndUpdate(id, {
