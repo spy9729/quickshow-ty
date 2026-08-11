@@ -58,7 +58,7 @@ const syncUserUpdation = inngest.createFunction(
 const releaseSeatsAndDeleteBooking = inngest.createFunction(
   {
     id: "release-seats-delete-booking",
-    triggers: { event: "app/checkpayment" },
+    triggers: { event: "ty-app/checkpayment" },
   },
   async ({ event, step }) => {
     const tenMinutesLater = new Date(Date.now() + 10 * 60 * 1000);
@@ -86,7 +86,7 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
 const sendBookingConfirmationEmail = inngest.createFunction(
   {
     id: "send-booking-confirmation-email",
-    triggers: { event: "app/show.booked" },
+    triggers: { event: "ty-app/show.booked" },
   },
   async ({ event, step }) => {
     const { bookingId } = event.data;
@@ -95,7 +95,24 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         path: "show",
         populate: { path: "movie", model: "Movie" },
       })
-      .populate("user");
+      .populate({ path: "user", model: "User" });
+
+    // 🛑 Guard against missing booking or missing user record
+    if (!booking || !booking.user) {
+      console.error(`[Inngest] Booking or User not found for ID: ${bookingId}`);
+      return;
+    }
+
+    const userName = booking.user.name || "Customer";
+    const userEmail = booking.user.email;
+
+    if (!userEmail) {
+      console.error(
+        `[Inngest] User email missing for booking ID: ${bookingId}`,
+      );
+      return;
+    }
+
     await sendEmail({
       to: booking.user.email,
       subject: `Payment Confirmation: "${booking.show.movie.title}" booked! `,

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import stripe from "stripe";
 import connectDB from "../config/db.js"; // 1. Import your DB connection helper
 import Booking from "../models/Booking.js";
+import { inngest } from "../inngest/index.js";
 
 const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2023-10-16" as any,
@@ -67,6 +68,14 @@ export const stripeWebhooks = async (
           console.log(
             `✅ Success: Booking ${bookingId} isPaid updated to true.`,
           );
+          try {
+            await inngest.send({
+              name: "ty-app/show.booked",
+              data: { bookingId },
+            });
+          } catch (inngestErr) {
+            console.error("Inngest send error (non-fatal):", inngestErr);
+          }
         }
       }
     }

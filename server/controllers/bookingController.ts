@@ -100,7 +100,7 @@ export const createbooking = async (
 
     // Run inngest Scheduler function to check payment status after 10 minutes
     await inngest.send({
-      name: "app/checkpayment",
+      name: "ty-app/checkpayment",
       data: { bookingId: booking._id.toString() },
     });
 
