@@ -10,6 +10,7 @@ import bookingRouter from "./routes/bookingRoutes.js";
 import adminRouter from "./routes/adminRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import { stripeWebhooks } from "./controllers/stripeWebooks.js";
+import { handleClerkWebhook } from "./controllers/clerkWebhook.js";
 
 const app = express();
 const port = 3000;
@@ -33,6 +34,7 @@ app.get("/api", (req, res) => res.send("Server is live!"));
 
 // API routes
 app.get("/", (req, res) => res.send("Server is live!"));
+app.post("/api/webhooks/clerk", express.json(), handleClerkWebhook);
 app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use("/api/show", showRouter);
 app.use("/api/booking", bookingRouter);
